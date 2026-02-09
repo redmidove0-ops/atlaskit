@@ -1,0 +1,47 @@
+@page {
+  size: A4;
+  margin: 12mm;
+}
+
+@media print {
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  /* اجعل صفحة الطباعة بدون حواف/ظلال */
+  .print-sheet {
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+  }
+
+  /* اجعل رأس الجدول يتكرر عند تعدد الصفحات */
+  thead {
+    display: table-header-group;
+  }
+
+  tr,
+  td,
+  th {
+    break-inside: avoid;
+  }
+}
+
+@media screen {
+  .print-sheet {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+}
+@media print {
+  /* تحسين النصوص الطويلة */
+  .print-sheet {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+}
