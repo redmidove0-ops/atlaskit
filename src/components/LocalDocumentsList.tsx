@@ -25,7 +25,6 @@ export default function LocalDocumentsList() {
           <div key={d.id} className="flex items-center justify-between gap-3 rounded-xl border p-3">
             <div className="min-w-0">
               <div className="truncate text-sm font-semibold">{d.number}</div>
-              <div className="truncate text-xs opacity-70">{d.customerName || '—'}</div>
             </div>
 
             <Link

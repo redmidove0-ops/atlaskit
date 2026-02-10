@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import {redirect} from 'next/navigation';
 import {createClient} from '@/lib/supabase/server';
 import CompanyProfileForm from '@/components/CompanyProfileForm';
@@ -34,7 +35,6 @@ export default async function CompanySettingsPage({
     .eq('user_id', user.id)
     .maybeSingle<ProfileRow>();
 
-  // ✅ إذا وقع خطأ في RLS أو أي شيء: نظهره بدل crash
   if (error) {
     return (
       <pre className="rounded-xl border bg-white p-4 text-sm text-red-700">
@@ -45,8 +45,7 @@ export default async function CompanySettingsPage({
     );
   }
 
-  // ✅ نطبع null -> '' حتى ما يطيحش الفورم
-  const normalized = profile
+  const initialProfile = profile
     ? {
         user_id: user.id,
         name: profile.name ?? '',
@@ -56,13 +55,32 @@ export default async function CompanySettingsPage({
         rc: profile.rc ?? '',
         nif: profile.nif ?? ''
       }
-    : null;
+    : {
+        user_id: user.id,
+        name: '',
+        address: '',
+        phone: '',
+        email: '',
+        rc: '',
+        nif: ''
+      };
 
   return (
-    <CompanyProfileForm
-      locale={locale}
-      userId={user.id}
-      initialProfile={normalized}
-    />
+    <div className="mx-auto max-w-3xl space-y-4">
+      <div className="flex items-center justify-between gap-2">
+        <div>
+          <h1 className="text-lg font-semibold">Company Settings</h1>
+          <p className="text-sm opacity-70">
+            املأ معلومات البائع مرة واحدة لتظهر تلقائيًا في كل Devis.
+          </p>
+        </div>
+
+        <Link href={`/${locale}/documents`} className="rounded-xl border px-3 py-2 text-sm">
+          ← Back
+        </Link>
+      </div>
+
+      <CompanyProfileForm locale={locale} userId={user.id} initialProfile={initialProfile} />
+    </div>
   );
 }

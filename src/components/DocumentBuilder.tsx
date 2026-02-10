@@ -6,7 +6,15 @@ import {useParams} from 'next/navigation';
 
 import InvoicePreview from '@/components/InvoicePreview';
 import ClientPicker from '@/components/ClientPicker';
-import {type DocDraft} from '@/lib/docDraft';
+import LineItemsEditor from '@/components/LineItemsEditor';
+import ProductPickerModal, {type CatalogProduct} from '@/components/ProductPickerModal';
+
+import {
+  normalizeDevisDraft,
+  genLineId,
+  type DocDraft,
+  type DevisDraft
+} from '@/lib/docDraft';
 
 type Template = 'classic' | 'modern';
 
@@ -22,7 +30,7 @@ export default function DocumentBuilder({
   initialDraft,
   initialTemplate
 }: {
-  docId?: string; // نخليه optional باش ما يطيحش لو اتنادى من مكان آخر
+  docId?: string;
   initialDraft: DocDraft;
   initialTemplate: Template;
 }) {
@@ -30,12 +38,22 @@ export default function DocumentBuilder({
   const t = useTranslations('builder');
   const params = useParams<{id?: string}>();
 
-  // ✅ خذ الـid إما من props أو من الـURL (أقوى)
+  const tr = (key: string, fallback: string) => {
+    try {
+      return t(key as any);
+    } catch {
+      return fallback;
+    }
+  };
+
+  // ✅ doc id من props أو من URL
   const effectiveId =
     isUuid(docId) ? docId : isUuid(params?.id) ? (params.id as string) : null;
 
-  const [draft, setDraft] = useState<DocDraft>(initialDraft);
+  const [draft, setDraft] = useState<DevisDraft>(() => normalizeDevisDraft(initialDraft));
   const [template, setTemplate] = useState<Template>(initialTemplate);
+
+  const [catalogOpen, setCatalogOpen] = useState(false);
 
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -43,14 +61,14 @@ export default function DocumentBuilder({
   const debounceRef = useRef<number | null>(null);
 
   const title = useMemo(() => {
-    const n = (draft as any)?.number?.trim?.();
+    const n = draft.number?.trim?.();
     return n ? n : 'Untitled';
-  }, [draft]);
+  }, [draft.number]);
 
   async function saveNow() {
     if (!effectiveId) {
       setSaveState('error');
-      setSaveError('No valid document id. Open via /documents/new ثم انتقل لوثيقة بـ UUID.');
+      setSaveError('Invalid document id. Open a real /documents/<uuid> page.');
       return false;
     }
 
@@ -60,11 +78,15 @@ export default function DocumentBuilder({
     const res = await fetch(`/api/documents/${effectiveId}`, {
       method: 'PUT',
       headers: {'content-type': 'application/json'},
-      body: JSON.stringify({title, content: draft, template})
+      body: JSON.stringify({
+        title,
+        content: draft,
+        template
+      })
     });
 
     const json = await res.json().catch(() => ({}));
-    if (!res.ok || json.ok === false) {
+    if (!res.ok || json?.ok === false) {
       setSaveState('error');
       setSaveError(json?.error ?? 'Save failed');
       return false;
@@ -74,18 +96,15 @@ export default function DocumentBuilder({
     return true;
   }
 
-  // Auto-save (debounced) — ✅ لا يحفظ إذا ما عندنا UUID صحيح
+  // ✅ Auto-save (debounced)
   useEffect(() => {
     if (!effectiveId) return;
-
-    setSaveState('saving');
-    setSaveError(null);
 
     if (debounceRef.current) window.clearTimeout(debounceRef.current);
 
     debounceRef.current = window.setTimeout(async () => {
       await saveNow();
-    }, 700);
+    }, 650);
 
     return () => {
       if (debounceRef.current) window.clearTimeout(debounceRef.current);
@@ -95,28 +114,61 @@ export default function DocumentBuilder({
 
   function openPrintPreview() {
     if (!effectiveId) return;
+
     const w = window.open('about:blank', '_blank');
     (async () => {
       await saveNow();
-      if (w) w.location.href = `/${locale}/documents/${effectiveId}/print`;
-      else window.open(`/${locale}/documents/${effectiveId}/print`, '_blank');
+      const url = `/${locale}/documents/${effectiveId}/print`;
+      if (w) w.location.href = url;
+      else window.open(url, '_blank');
     })();
+  }
+
+  function quickPrint() {
+    if (!effectiveId) return;
+    const w = window.open('about:blank', '_blank');
+    (async () => {
+      await saveNow();
+      const url = `/${locale}/documents/${effectiveId}/print?autoprint=1`;
+      if (w) w.location.href = url;
+      else window.open(url, '_blank');
+    })();
+  }
+
+  function addFromCatalog(p: CatalogProduct) {
+    setDraft((d) => ({
+      ...d,
+      items: [
+        {
+          lineId: genLineId(),
+          productRefId: p.id,
+          label: p.name || '—',
+          description: p.description || '',
+          qty: 1,
+          unit: p.unit || 'pcs',
+          unitPrice: Number(p.price ?? 0),
+          tvaRate: Number(p.tva ?? 0)
+        },
+        ...d.items
+      ]
+    }));
   }
 
   const statusLabel =
     saveState === 'saving'
-      ? t('saving')
+      ? tr('saving', 'Saving…')
       : saveState === 'saved'
-      ? t('saved')
+      ? tr('saved', 'Saved')
       : saveState === 'error'
-      ? t('saveError')
+      ? tr('saveError', 'Save error')
       : '';
 
   return (
     <div className="grid gap-4 lg:grid-cols-2">
+      {/* LEFT: Builder */}
       <div className="rounded-2xl border bg-white p-4">
         <div className="mb-3 flex items-center justify-between gap-3">
-          <div className="text-sm font-semibold">{t('title')}</div>
+          <div className="text-sm font-semibold">{tr('title', 'Builder')}</div>
 
           <div className="flex items-center gap-2">
             <div className="text-xs opacity-70">{statusLabel}</div>
@@ -126,16 +178,19 @@ export default function DocumentBuilder({
           </div>
         </div>
 
-        {/* مثال سريع لتعديل رقم الوثيقة */}
+        {/* Number */}
         <div className="grid gap-2">
-          <label className="text-sm opacity-70">{t('docNumber')}</label>
+          <label className="text-sm opacity-70">
+            {tr('docNumber', 'Document number')}
+          </label>
           <input
             className="rounded-xl border px-3 py-2 text-sm"
-            value={(draft as any).number ?? ''}
-            onChange={(e) => setDraft((d) => ({...(d as any), number: e.target.value}))}
+            value={draft.number}
+            onChange={(e) => setDraft((d) => ({...d, number: e.target.value}))}
           />
         </div>
 
+        {/* Actions */}
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <button
             type="button"
@@ -143,16 +198,25 @@ export default function DocumentBuilder({
             disabled={!effectiveId}
             className="rounded-xl bg-black px-4 py-2 text-sm text-white disabled:opacity-50"
           >
-            {t('openPrintPreview')}
+            {tr('openPrintPreview', 'Open print preview')}
           </button>
 
           <button
             type="button"
+            onClick={quickPrint}
             disabled={!effectiveId}
-            onClick={() => window.open(`/${locale}/documents/${effectiveId}/print`, '_blank')}
             className="rounded-xl border px-4 py-2 text-sm disabled:opacity-50"
           >
-            {t('quickPrint')}
+            {tr('quickPrint', 'Quick print')}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => void saveNow()}
+            disabled={!effectiveId}
+            className="rounded-xl border px-4 py-2 text-sm disabled:opacity-50"
+          >
+            {tr('save', 'Save')}
           </button>
 
           <select
@@ -165,14 +229,15 @@ export default function DocumentBuilder({
           </select>
         </div>
 
+        {/* Client */}
         <ClientPicker
           onPick={(c) => {
             if (!c) {
-              setDraft((d) => ({...(d as any), client: {name: ''}}));
+              setDraft((d) => ({...d, client: {name: ''}}));
               return;
             }
             setDraft((d) => ({
-              ...(d as any),
+              ...d,
               client: {
                 name: c.name,
                 phone: c.phone,
@@ -183,13 +248,43 @@ export default function DocumentBuilder({
           }}
         />
 
-        {/* Debug صغير مفيد */}
-        <div className="mt-3 text-xs opacity-50">docId: {effectiveId ?? '(missing)'}</div>
+        {/* Items */}
+        <LineItemsEditor
+          locale={locale}
+          items={draft.items}
+          onChange={(items) => setDraft((d) => ({...d, items}))}
+          onOpenCatalog={() => setCatalogOpen(true)}
+        />
+
+        {/* Notes */}
+        <div className="mt-4 grid gap-2">
+          <label className="text-sm opacity-70">{tr('notes', 'Notes')}</label>
+          <textarea
+            className="min-h-[90px] rounded-xl border px-3 py-2 text-sm"
+            value={draft.notes ?? ''}
+            onChange={(e) => setDraft((d) => ({...d, notes: e.target.value}))}
+          />
+        </div>
+
+        <div className="mt-3 text-xs opacity-50">
+          docId: {effectiveId ?? '(missing)'}
+        </div>
+
+        <ProductPickerModal
+          open={catalogOpen}
+          locale={locale}
+          onClose={() => setCatalogOpen(false)}
+          onPick={(p) => {
+            addFromCatalog(p);
+            setCatalogOpen(false);
+          }}
+        />
       </div>
 
+      {/* RIGHT: Preview */}
       <div className="rounded-2xl border bg-white p-4">
-        <div className="mb-3 text-sm font-semibold">{t('preview')}</div>
-        <InvoicePreview locale={locale} draft={draft} template={template} />
+        <div className="mb-3 text-sm font-semibold">{tr('preview', 'Preview')}</div>
+        <InvoicePreview locale={locale} draft={draft as any} template={template} />
       </div>
     </div>
   );

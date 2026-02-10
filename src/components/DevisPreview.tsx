@@ -1,10 +1,15 @@
 import {DevisDraft, calcDevisTotals} from '@/lib/docDraft';
 
+function currencyForLocale(locale: string) {
+  if (locale === 'en') return 'EUR';
+  return 'DZD'; // ar + fr
+}
+
 function formatMoney(locale: string, amount: number) {
   return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: 'DZD'
-  }).format(amount);
+    currency: currencyForLocale(locale)
+  }).format(Number.isFinite(amount) ? amount : 0);
 }
 
 export default function DevisPreview({
@@ -17,6 +22,7 @@ export default function DevisPreview({
   template: 'classic' | 'modern';
 }) {
   const totals = calcDevisTotals(draft);
+  const items = draft.items ?? [];
 
   return (
     <div className="print-sheet rounded-2xl border bg-white p-6">
@@ -60,20 +66,29 @@ export default function DevisPreview({
             </tr>
           </thead>
           <tbody>
-            {draft.items.map((it) => {
-              const base = it.qty * it.unitPrice;
-              const tva = base * it.tvaRate;
-              const total = base + tva;
-              return (
-                <tr key={it.id} className="border-t">
-                  <td className="p-2">{it.label || '—'}</td>
-                  <td className="p-2 text-right">{it.qty}</td>
-                  <td className="p-2 text-right">{formatMoney(locale, it.unitPrice)}</td>
-                  <td className="p-2 text-right">{Math.round(it.tvaRate * 100)}%</td>
-                  <td className="p-2 text-right">{formatMoney(locale, total)}</td>
-                </tr>
-              );
-            })}
+            {items.length === 0 ? (
+              <tr className="border-t">
+                <td className="p-3 text-sm opacity-70" colSpan={5}>
+                  — No items —
+                </td>
+              </tr>
+            ) : (
+              items.map((it) => {
+                const base = it.qty * it.unitPrice;
+                const tva = (base * it.tvaRate) / 100;
+                const total = base + tva;
+
+                return (
+                  <tr key={it.lineId} className="border-t">
+                    <td className="p-2">{it.label || '—'}</td>
+                    <td className="p-2 text-right">{it.qty}</td>
+                    <td className="p-2 text-right">{formatMoney(locale, it.unitPrice)}</td>
+                    <td className="p-2 text-right">{it.tvaRate}%</td>
+                    <td className="p-2 text-right">{formatMoney(locale, total)}</td>
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
       </div>
