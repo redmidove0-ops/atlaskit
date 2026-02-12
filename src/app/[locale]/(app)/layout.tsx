@@ -16,8 +16,10 @@ export default async function AppLayout({
 
   return (
     <div className="min-h-screen bg-gray-50 text-black">
-      <TopBarServer locale={locale} />
-      <DashboardTopBar />
+      <div className="app-chrome no-print">
+        <TopBarServer locale={locale} />
+        <DashboardTopBar />
+      </div>
       <main className="mx-auto w-full max-w-6xl px-4 py-6">
         {children}
       </main>

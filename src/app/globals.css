@@ -24,6 +24,17 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ── Print-layout isolation (screen) ── */
+/* When a [data-print-layout] container is present, hide app chrome on screen */
+body:has([data-print-layout]) .app-chrome,
+body:has([data-print-layout]) .locale-header {
+  display: none !important;
+}
+body:has([data-print-layout]) {
+  background: #fff !important;
+}
+
 @media print {
   .no-print {
     display: none !important;

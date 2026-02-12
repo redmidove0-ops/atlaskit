@@ -1,4 +1,8 @@
 {
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "home": "Accueil"
+  },
   "common": {
     "appName": "AtlasKit",
     "language": "Langue",
@@ -14,12 +18,45 @@
     "products": "Produits",
     "logout": "Déconnexion"
   },
+  "clients": {
+    "title": "Clients",
+    "subtitle": "Carnet clients pour les choisir rapidement dans le Devis.",
+    "searchPlaceholder": "Rechercher…",
+    "addNew": "Ajouter un client",
+    "listTitle": "Clients",
+    "loading": "Chargement…",
+    "empty": "Aucun client.",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "confirmDelete": "Supprimer ce client ?",
+    "createTitle": "Nouveau client",
+    "editTitle": "Modifier le client",
+    "name": "Nom",
+    "phone": "Téléphone",
+    "address": "Adresse",
+    "email": "Email",
+    "emailInvalid": "Email invalide",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "saveFailed": "Échec de l'enregistrement.",
+    "deleteFailed": "Échec de suppression.",
+    "unauthorized": "Veuillez vous connecter.",
+    "goLogin": "Aller à la connexion",
+    "close": "Fermer",
+    "invalidId": "ID invalide",
+    "loadFailed": "Impossible de charger les clients."
+  },
   "auth": {
+    "loading": "Chargement…",
     "title": "Connexion",
     "subtitle": "Entrez votre email et mot de passe.",
     "email": "Email",
     "password": "Mot de passe",
     "login": "Connexion",
+    "createAccount": "Créer un compte",
+    "switchToSignup": "Créer un nouveau compte",
+    "switchToLogin": "J'ai déjà un compte",
     "signup": "Créer un compte",
     "loggingIn": "Connexion en cours…",
     "signingUp": "Création du compte…",
@@ -29,7 +66,6 @@
     "error": "Une erreur est survenue",
     "hint": "En cas de problème, essayez le mode navigation privée ou désactivez les extensions."
   },
-
   "products": {
     "title": "Produits et services",
     "subtitle": "Catalogue pour accélérer l'ajout de lignes dans les Devis.",
@@ -54,7 +90,6 @@
     "confirmDelete": "Êtes-vous sûr de vouloir supprimer ?",
     "empty": "Aucun produit pour l'instant."
   },
-
   "templates": {
     "title": "Modèles",
     "subtitle": "Choisissez le modèle d'impression par défaut.",
@@ -67,17 +102,27 @@
     "saving": "Enregistrement…",
     "hint": "Votre choix sera mémorisé automatiquement à l'ouverture de la page d'impression."
   },
-
   "dashboard": {
     "title": "Tableau de bord",
     "subtitle": "Bienvenue sur AtlasKit.",
     "goDocuments": "Documents",
     "previewPdf": "Aperçu PDF"
   },
-
+  "landing": {
+    "title": "AtlasKit",
+    "subtitle": "Créez des devis professionnels en quelques minutes.",
+    "ctaPrimary": "Créer un document",
+    "ctaSecondary": "Connexion",
+    "f1": "Créateur de devis rapide avec aperçu",
+    "f2": "Clients + catalogue produits/services",
+    "f3": "Modèles A4 prêts à imprimer (PDF)",
+    "f4": "Support Arabe / Français / Anglais",
+    "f5": "Fonctionne parfaitement sur PC et mobile — devis/factures A4 prêts à imprimer."
+  },
   "builder": {
     "title": "Éditeur",
     "preview": "Aperçu",
+    "printPreviewTitle": "Aperçu d'impression",
     "saving": "Enregistrement…",
     "saved": "Enregistré ✅",
     "saveError": "Échec de l’enregistrement",
@@ -86,11 +131,9 @@
     "quickPrint": "Impression rapide",
     "save": "Enregistrer",
     "notes": "Notes",
-
     "itemsTitle": "Lignes",
     "addItem": "Ajouter une ligne",
     "addFromCatalog": "Ajouter du catalogue",
-
     "colItem": "Article",
     "colQty": "Qté",
     "colUnit": "Unité",
@@ -102,7 +145,6 @@
     "itemPlaceholder": "Service / Produit…",
     "descPlaceholder": "Description (facultatif)…",
     "itemsHint": "Astuce : ajoutez depuis le catalogue puis ajustez qté/prix/TVA ici.",
-
     "catalogTitle": "Catalogue",
     "searchProducts": "Rechercher…",
     "clearSearch": "Effacer",
@@ -110,6 +152,12 @@
     "noProducts": "Aucun produit trouvé.",
     "pick": "Ajouter",
     "close": "Fermer",
-    "catalogHint": "Astuce : recherchez puis cliquez sur Ajouter."
+    "catalogHint": "Astuce : recherchez puis cliquez sur Ajouter.",
+
+    "clientTitle": "Client",
+    "clientHint": "Choisissez un client depuis votre carnet (ou effacez la sélection).",
+    "pickClient": "Choisir un client",
+    "clearClient": "Effacer",
+    "manageClients": "Gérer les clients"
   }
 }

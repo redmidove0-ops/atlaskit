@@ -24,6 +24,8 @@
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "jsonrepair": "^3.13.2",
+    "supabase": "^2.76.7",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

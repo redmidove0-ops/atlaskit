@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import {NextIntlClientProvider, hasLocale} from 'next-intl';
-import {getMessages, setRequestLocale} from 'next-intl/server';
+import {getMessages, getTranslations, setRequestLocale} from 'next-intl/server';
 import {notFound} from 'next/navigation';
 
 import {getDir, routing} from '@/i18n/routing';
+import HtmlLangDir from '@/components/HtmlLangDir';
 import LocaleSwitcher from '@/components/LocaleSwitcher';
 
 export function generateStaticParams() {
@@ -23,21 +24,24 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   const messages = await getMessages();
+  const tCommon = await getTranslations('common');
+  const tNav = await getTranslations('nav');
 
   return (
-    <div lang={locale} dir={getDir(locale)} className="min-h-screen bg-white text-black">
+    <div dir={getDir(locale)} className="min-h-screen bg-white text-black">
+      <HtmlLangDir locale={locale} />
       <NextIntlClientProvider messages={messages}>
-        <header className="no-print border-b bg-white">
+        <header className="locale-header no-print border-b bg-white">
           <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
             <div className="flex items-center gap-4">
               <Link href={`/${locale}`} className="text-lg font-semibold">
-                AtlasKit
+                {tCommon('appName')}
               </Link>
               <Link
                 href={`/${locale}/dashboard`}
                 className="text-sm opacity-80 hover:opacity-100"
               >
-                Dashboard
+                {tNav('dashboard')}
               </Link>
             </div>
 

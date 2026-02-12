@@ -1,8 +1,7 @@
 'use client';
 
-import {useEffect, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {useTranslations} from 'next-intl';
-import {formatMoney} from '@/lib/format';
 
 export type CatalogProduct = {
   id: string;
@@ -25,20 +24,43 @@ export default function ProductPickerModal({
   onPick: (p: CatalogProduct) => void;
 }) {
   const t = useTranslations('builder');
-  const tr = (key: string, fallback: string) => {
-    try {
-      return t(key as any);
-    } catch {
-      return fallback;
-    }
-  };
 
   const [q, setQ] = useState('');
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [items, setItems] = useState<CatalogProduct[]>([]);
 
-  // ESC to close
+  async function load(search: string) {
+    setLoading(true);
+    setErr(null);
+    try {
+      const qs = new URLSearchParams();
+      if (search.trim()) qs.set('q', search.trim());
+      qs.set('limit', '200');
+
+      const res = await fetch(`/api/products?${qs.toString()}`, {cache: 'no-store'});
+      const json = (await res.json()) as {ok: boolean; error: string | null; data: CatalogProduct[] | null};
+      if (!res.ok || !json.ok) throw new Error(json.error ?? 'Failed');
+      setItems(json.data ?? []);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'Failed');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (!open) return;
+    setQ('');
+    load('');
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const id = window.setTimeout(() => load(q), 250);
+    return () => window.clearTimeout(id);
+  }, [q, open]);
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -48,53 +70,21 @@ export default function ProductPickerModal({
     return () => window.removeEventListener('keydown', onKey);
   }, [open, onClose]);
 
-  // fetch products (debounced)
-  useEffect(() => {
-    if (!open) return;
-
-    setErr(null);
-    const handle = window.setTimeout(async () => {
-      try {
-        setLoading(true);
-        const res = await fetch(`/api/products?q=${encodeURIComponent(q.trim())}`);
-        const json = await res.json().catch(() => ({}));
-
-        if (!res.ok || json?.ok === false) {
-          setErr(json?.error ?? 'Failed to load products');
-          setItems([]);
-          return;
-        }
-
-        setItems(Array.isArray(json.data) ? json.data : []);
-      } catch (e: any) {
-        setErr(e?.message ?? 'Failed to load products');
-        setItems([]);
-      } finally {
-        setLoading(false);
-      }
-    }, 250);
-
-    return () => window.clearTimeout(handle);
-  }, [open, q]);
+  const list = useMemo(() => items, [items]);
 
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50">
-      {/* overlay */}
-      <button
-        type="button"
-        aria-label="Close"
-        onClick={onClose}
-        className="absolute inset-0 bg-black/40"
-      />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <div className="w-full max-w-2xl rounded-2xl bg-white shadow-xl">
+        <div className="flex items-start justify-between gap-2 border-b p-4">
+          <div>
+            <div className="text-sm font-semibold">{t('catalogTitle')}</div>
+            <div className="text-xs opacity-70">{t('catalogHint')}</div>
+          </div>
 
-      {/* modal */}
-      <div className="relative mx-auto mt-20 w-[95%] max-w-3xl rounded-2xl border bg-white shadow-xl">
-        <div className="flex items-center justify-between gap-2 border-b p-4">
-          <div className="text-sm font-semibold">{tr('catalogTitle', 'Catalog')}</div>
           <button type="button" onClick={onClose} className="rounded-xl border px-3 py-2 text-sm">
-            {tr('close', 'Close')}
+            {t('close')}
           </button>
         </div>
 
@@ -103,62 +93,50 @@ export default function ProductPickerModal({
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder={tr('searchProducts', 'Search products…')}
+              placeholder={t('searchProducts')}
               className="w-full rounded-xl border bg-white px-3 py-2 text-sm"
-              autoFocus
             />
-            <button type="button" onClick={() => setQ('')} className="rounded-xl border px-3 py-2 text-sm">
-              {tr('clearSearch', 'Clear')}
-            </button>
+            {q ? (
+              <button
+                type="button"
+                onClick={() => setQ('')}
+                className="rounded-xl border px-3 py-2 text-sm"
+              >
+                {t('clearSearch')}
+              </button>
+            ) : null}
           </div>
 
-          {err ? (
-            <div className="mt-3 rounded-xl border bg-white p-3 text-sm text-red-700">{err}</div>
-          ) : null}
+          {loading ? <div className="mt-3 text-sm opacity-70">{t('loading')}</div> : null}
+          {err ? <div className="mt-3 text-sm text-red-600">{err}</div> : null}
 
-          <div className="mt-3 overflow-hidden rounded-xl border">
-            <div className="max-h-[55vh] overflow-y-auto">
-              {loading ? (
-                <div className="p-4 text-sm opacity-70">{tr('loading', 'Loading…')}</div>
-              ) : items.length === 0 ? (
-                <div className="p-4 text-sm opacity-70">{tr('noProducts', 'No products found.')}</div>
-              ) : (
-                <ul className="divide-y">
-                  {items.map((p) => (
-                    <li key={p.id} className="p-3 hover:bg-gray-50">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <div className="font-medium">{p.name || '—'}</div>
-                          {p.description ? (
-                            <div className="mt-1 line-clamp-2 text-xs opacity-70">{p.description}</div>
-                          ) : null}
-                          <div className="mt-2 text-xs opacity-70">
-                            {p.unit ? `${p.unit} • ` : ''}TVA {Number(p.tva ?? 0)}%
-                          </div>
-                        </div>
-
-                        <div className="shrink-0 text-right">
-                          <div className="text-sm font-semibold">
-                            {formatMoney(locale, Number(p.price ?? 0))}
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => onPick(p)}
-                            className="mt-2 rounded-xl bg-black px-3 py-2 text-sm text-white"
-                          >
-                            {tr('pick', 'Add')}
-                          </button>
-                        </div>
+          <div className="mt-3 max-h-[420px] overflow-auto rounded-xl border">
+            {list.length === 0 && !loading ? (
+              <div className="p-3 text-sm opacity-70">{t('noProducts')}</div>
+            ) : (
+              <ul className="divide-y">
+                {list.map((p) => (
+                  <li key={p.id} className="flex items-center justify-between gap-3 p-3">
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-semibold">{p.name}</div>
+                      <div className="truncate text-xs opacity-70">
+                        {[p.description, p.unit ? `Unit: ${p.unit}` : '', `TVA: ${p.tva}%`]
+                          .filter(Boolean)
+                          .join(' • ')}
                       </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </div>
+                    </div>
 
-          <div className="mt-3 text-xs opacity-60">
-            {tr('catalogHint', 'Tip: Search then click Add to insert it into your document.')}
+                    <button
+                      type="button"
+                      onClick={() => onPick(p)}
+                      className="rounded-xl bg-black px-3 py-2 text-sm text-white"
+                    >
+                      {t('pick')}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       </div>

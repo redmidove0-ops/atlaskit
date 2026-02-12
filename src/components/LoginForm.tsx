@@ -3,7 +3,7 @@
 import {useState} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
 import {useRouter} from 'next/navigation';
-import {createClient} from '@/lib/supabase/browser';
+import {createClient} from '@/lib/supabase/client';
 
 export default function LoginForm() {
   const locale = useLocale();

@@ -1,115 +1,123 @@
 'use client';
 
-import Link from 'next/link';
 import {useEffect, useMemo, useState} from 'react';
-import {createClient} from '@/lib/supabase/client';
+import Link from 'next/link';
+import {useLocale, useTranslations} from 'next-intl';
 
-type ClientRow = {
+export type ClientLite = {
   id: string;
   name: string;
-  phone: string | null;
-  address: string | null;
-  email: string | null;
-  created_at?: string;
+  phone: string;
+  address: string;
+  email: string;
 };
 
 export default function ClientPicker({
-  locale,
-  valueId,
   onPick
 }: {
-  locale: string;
-  valueId?: string | null;
-  onPick: (picked: {id: string; client: {name: string; phone?: string; address?: string; email?: string}} | null) => void;
+  onPick: (client: ClientLite | null) => void;
 }) {
-  const supabase = createClient();
+  const locale = useLocale();
+  const t = useTranslations('builder');
 
-  const [clients, setClients] = useState<ClientRow[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+
+  const [clients, setClients] = useState<ClientLite[]>([]);
   const [q, setQ] = useState('');
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      setErr(null);
-
-      const {data, error} = await supabase
-        .from('clients')
-        .select('id, name, phone, address, email, created_at')
-        .order('created_at', {ascending: false})
-        .limit(200);
-
-      if (error) setErr(error.message);
-      setClients((data ?? []) as any);
+  async function load() {
+    setLoading(true);
+    setErr(null);
+    try {
+      const res = await fetch(`/api/clients?limit=200`, {cache: 'no-store'});
+      const json = (await res.json()) as {ok: boolean; error: string | null; data: ClientLite[] | null};
+      if (!res.ok || !json.ok) throw new Error(json.error ?? 'Failed');
+      setClients(json.data ?? []);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'Failed');
+    } finally {
       setLoading(false);
-    })();
-  }, [supabase]);
-
-  const filtered = useMemo(() => {
-    const s = q.trim().toLowerCase();
-    if (!s) return clients;
-    return clients.filter((c) =>
-      [c.name, c.phone ?? '', c.address ?? '', c.email ?? '']
-        .join(' ')
-        .toLowerCase()
-        .includes(s)
-    );
-  }, [clients, q]);
-
-  function pick(id: string) {
-    if (!id) {
-      onPick(null);
-      return;
     }
-    const c = clients.find((x) => x.id === id);
-    if (!c) return;
-
-    onPick({
-      id: c.id,
-      client: {
-        name: c.name,
-        phone: c.phone ?? '',
-        address: c.address ?? '',
-        email: c.email ?? ''
-      }
-    });
   }
 
+  useEffect(() => {
+    load();
+  }, []);
+
+  const filtered = useMemo(() => {
+    const qq = q.trim().toLowerCase();
+    if (!qq) return clients;
+    return clients.filter((c) => {
+      const hay = `${c.name} ${c.phone} ${c.email} ${c.address}`.toLowerCase();
+      return hay.includes(qq);
+    });
+  }, [clients, q]);
+
   return (
-    <div className="mt-4 rounded-2xl border bg-white p-4 space-y-3">
-      <div className="flex items-center justify-between gap-2">
-        <div className="text-sm font-semibold">Client</div>
-        <Link
-          href={`/${locale}/clients`}
-          className="rounded-xl border px-3 py-1.5 text-xs hover:bg-gray-50"
-        >
-          Manage clients
-        </Link>
+    <div className="rounded-2xl border bg-white p-4">
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <div>
+          <div className="text-sm font-semibold">{t('clientTitle')}</div>
+          <div className="text-xs opacity-70">{t('clientHint')}</div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => onPick(null)}
+            className="rounded-xl border px-3 py-2 text-sm"
+          >
+            {t('clearClient')}
+          </button>
+
+          <Link href={`/${locale}/clients`} className="rounded-xl border px-3 py-2 text-sm">
+            {t('manageClients')}
+          </Link>
+        </div>
       </div>
 
-      <input
-        className="w-full rounded-xl border px-3 py-2 text-sm"
-        placeholder="Search client…"
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-      />
+      <div className="mt-3 flex items-center gap-2">
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder={t('pickClient')}
+          className="w-full rounded-xl border bg-white px-3 py-2 text-sm"
+        />
+        <button type="button" onClick={load} className="rounded-xl border px-3 py-2 text-sm">
+          ↻
+        </button>
+      </div>
 
-      <select
-        className="w-full rounded-xl border px-3 py-2 text-sm"
-        value={valueId ?? ''}
-        onChange={(e) => pick(e.target.value)}
-        disabled={loading}
-      >
-        <option value="">{loading ? 'Loading…' : 'Select a client…'}</option>
-        {filtered.map((c) => (
-          <option key={c.id} value={c.id}>
-            {c.name}
-          </option>
-        ))}
-      </select>
+      {loading ? <div className="mt-3 text-sm opacity-70">…</div> : null}
+      {err ? <div className="mt-3 text-sm text-red-600">{err}</div> : null}
 
-      {err ? <div className="text-xs text-red-600">{err}</div> : null}
+      <div className="mt-3 max-h-64 overflow-auto rounded-xl border">
+        {filtered.length === 0 ? (
+          <div className="p-3 text-sm opacity-70">No clients.</div>
+        ) : (
+          <ul className="divide-y">
+            {filtered.map((c) => (
+              <li key={c.id} className="flex items-center justify-between gap-2 p-3">
+                <div className="min-w-0">
+                  <div className="truncate text-sm font-semibold">{c.name || '—'}</div>
+                  <div className="truncate text-xs opacity-70">
+                    {[c.phone, c.email, c.address].filter(Boolean).join(' • ') || '—'}
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => onPick(c)}
+                  className="rounded-xl bg-black px-3 py-2 text-sm text-white"
+                >
+                  {t('pick')}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }
