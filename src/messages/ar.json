@@ -1,7 +1,40 @@
 {
   "nav": {
     "dashboard": "لوحة التحكم",
-    "home": "الرئيسية"
+    "home": "الرئيسية",
+    "main": "الرئيسي",
+    "documents": "الوثائق",
+    "clients": "الزبائن",
+    "products": "المنتجات",
+    "settings": "الإعدادات",
+    "company": "الشركة",
+    "preferences": "التفضيلات"
+  },
+  "documents": {
+    "title": "الوثائق",
+    "invoices": "الفواتير",
+    "quotes": "عروض الأسعار",
+    "deliveryNotes": "سندات التسليم",
+    "creditNotes": "إشعارات الدائن",
+    "allDocuments": "جميع الوثائق",
+    "newDocument": "وثيقة جديدة",
+    "noDocuments": "لا توجد وثائق بعد.",
+    "searchPlaceholder": "ابحث في الوثائق…",
+    "createFirst": "أنشئ وثيقتك الأولى للبدء.",
+    "untitled": "بدون عنوان",
+    "invoice": "فاتورة",
+    "quote": "عرض سعر",
+    "deliveryNote": "سند تسليم",
+    "creditNote": "إشعار دائن",
+    "status": {
+      "draft": "مسودة",
+      "sent": "مرسلة",
+      "paid": "مدفوعة",
+      "partial": "مدفوعة جزئياً",
+      "overdue": "متأخرة",
+      "cancelled": "ملغاة",
+      "delivered": "تم التسليم"
+    }
   },
   "common": {
     "appName": "AtlasKit",
@@ -106,7 +139,16 @@
     "title": "لوحة التحكم",
     "subtitle": "مرحبًا بك في AtlasKit.",
     "goDocuments": "الوثائق",
-    "previewPdf": "معاينة PDF"
+    "previewPdf": "معاينة PDF",
+    "recentDocuments": "الوثائق الأخيرة",
+    "quickActions": "إجراءات سريعة",
+    "newInvoice": "فاتورة جديدة",
+    "newQuote": "عرض سعر جديد",
+    "viewAll": "عرض الكل",
+    "totalDocuments": "إجمالي الوثائق",
+    "totalClients": "إجمالي الزبائن",
+    "totalProducts": "إجمالي المنتجات",
+    "noRecentDocs": "لا توجد وثائق حديثة."
   },
   "landing": {
     "title": "AtlasKit",

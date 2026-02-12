@@ -1,7 +1,40 @@
 {
   "nav": {
     "dashboard": "Tableau de bord",
-    "home": "Accueil"
+    "home": "Accueil",
+    "main": "Principal",
+    "documents": "Documents",
+    "clients": "Clients",
+    "products": "Produits",
+    "settings": "Paramètres",
+    "company": "Société",
+    "preferences": "Préférences"
+  },
+  "documents": {
+    "title": "Documents",
+    "invoices": "Factures",
+    "quotes": "Devis",
+    "deliveryNotes": "Bons de livraison",
+    "creditNotes": "Avoirs",
+    "allDocuments": "Tous les documents",
+    "newDocument": "Nouveau document",
+    "noDocuments": "Aucun document pour l'instant.",
+    "searchPlaceholder": "Rechercher des documents…",
+    "createFirst": "Créez votre premier document pour commencer.",
+    "untitled": "Sans titre",
+    "invoice": "Facture",
+    "quote": "Devis",
+    "deliveryNote": "Bon de livraison",
+    "creditNote": "Avoir",
+    "status": {
+      "draft": "Brouillon",
+      "sent": "Envoyé",
+      "paid": "Payé",
+      "partial": "Partiel",
+      "overdue": "En retard",
+      "cancelled": "Annulé",
+      "delivered": "Livré"
+    }
   },
   "common": {
     "appName": "AtlasKit",
@@ -106,7 +139,16 @@
     "title": "Tableau de bord",
     "subtitle": "Bienvenue sur AtlasKit.",
     "goDocuments": "Documents",
-    "previewPdf": "Aperçu PDF"
+    "previewPdf": "Aperçu PDF",
+    "recentDocuments": "Documents récents",
+    "quickActions": "Actions rapides",
+    "newInvoice": "Nouvelle facture",
+    "newQuote": "Nouveau devis",
+    "viewAll": "Voir tout",
+    "totalDocuments": "Total documents",
+    "totalClients": "Total clients",
+    "totalProducts": "Total produits",
+    "noRecentDocs": "Aucun document récent."
   },
   "landing": {
     "title": "AtlasKit",

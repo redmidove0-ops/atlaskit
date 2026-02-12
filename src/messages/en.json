@@ -1,7 +1,40 @@
 {
   "nav": {
     "dashboard": "Dashboard",
-    "home": "Home"
+    "home": "Home",
+    "main": "Main",
+    "documents": "Documents",
+    "clients": "Clients",
+    "products": "Products",
+    "settings": "Settings",
+    "company": "Company",
+    "preferences": "Preferences"
+  },
+  "documents": {
+    "title": "Documents",
+    "invoices": "Invoices",
+    "quotes": "Quotes",
+    "deliveryNotes": "Delivery Notes",
+    "creditNotes": "Credit Notes",
+    "allDocuments": "All Documents",
+    "newDocument": "New Document",
+    "noDocuments": "No documents yet.",
+    "searchPlaceholder": "Search documents…",
+    "createFirst": "Create your first document to get started.",
+    "untitled": "Untitled",
+    "invoice": "Invoice",
+    "quote": "Quote",
+    "deliveryNote": "Delivery Note",
+    "creditNote": "Credit Note",
+    "status": {
+      "draft": "Draft",
+      "sent": "Sent",
+      "paid": "Paid",
+      "partial": "Partial",
+      "overdue": "Overdue",
+      "cancelled": "Cancelled",
+      "delivered": "Delivered"
+    }
   },
   "common": {
     "appName": "AtlasKit",
@@ -109,7 +142,16 @@
     "title": "Dashboard",
     "subtitle": "Welcome to AtlasKit.",
     "goDocuments": "Documents",
-    "previewPdf": "Preview PDF"
+    "previewPdf": "Preview PDF",
+    "recentDocuments": "Recent Documents",
+    "quickActions": "Quick Actions",
+    "newInvoice": "New Invoice",
+    "newQuote": "New Quote",
+    "viewAll": "View all",
+    "totalDocuments": "Total Documents",
+    "totalClients": "Total Clients",
+    "totalProducts": "Total Products",
+    "noRecentDocs": "No recent documents."
   },
   "landing": {
     "title": "AtlasKit",

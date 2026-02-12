@@ -1,19 +1,24 @@
-import {getTranslations} from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 import LoginForm from '@/components/LoginForm';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default async function LoginPage() {
   const t = await getTranslations('auth');
 
   return (
-    <div className="mx-auto max-w-md p-6">
-      <div className="rounded-2xl border bg-white p-6">
-        <h1 className="text-2xl font-bold">{t('title')}</h1>
-        <p className="mt-1 text-sm opacity-70">{t('subtitle')}</p>
-
-        <div className="mt-4">
+    <div className="flex min-h-[60vh] items-center justify-center px-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
+            A
+          </div>
+          <CardTitle className="text-2xl">{t('title')}</CardTitle>
+          <CardDescription>{t('subtitle')}</CardDescription>
+        </CardHeader>
+        <CardContent>
           <LoginForm />
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
