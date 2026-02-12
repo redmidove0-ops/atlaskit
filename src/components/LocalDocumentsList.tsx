@@ -4,6 +4,7 @@ import Link from 'next/link';
 import {useEffect, useState} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
 import {loadDocs, type SavedDoc} from '@/lib/localDocs';
+import {routes} from '@/lib/routes';
 
 export default function LocalDocumentsList() {
   const locale = useLocale();
@@ -28,7 +29,7 @@ export default function LocalDocumentsList() {
             </div>
 
             <Link
-              href={`/${locale}/documents/preview/print`}
+              href={routes.documentPreviewPrint(locale)}
               className="rounded-xl border px-3 py-2 text-sm"
               onClick={() => {
                 // put this doc into draft so preview prints it

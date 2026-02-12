@@ -4,6 +4,7 @@ import {useState} from 'react';
 import {useLocale, useTranslations} from 'next-intl';
 import {useRouter} from 'next/navigation';
 import {createClient} from '@/lib/supabase/client';
+import {routes} from '@/lib/routes';
 
 export default function LoginForm() {
   const locale = useLocale();
@@ -34,7 +35,7 @@ export default function LoginForm() {
         return;
       }
 
-      router.push(`/${locale}/documents`);
+      router.push(routes.documents(locale));
       router.refresh();
     } finally {
       setLoading(false);

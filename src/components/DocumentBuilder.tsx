@@ -8,6 +8,7 @@ import InvoicePreview from '@/components/InvoicePreview';
 import ClientPicker from '@/components/ClientPicker';
 import LineItemsEditor from '@/components/LineItemsEditor';
 import ProductPickerModal, {type CatalogProduct} from '@/components/ProductPickerModal';
+import {routes} from '@/lib/routes';
 
 import {
   type DocDraft,
@@ -138,7 +139,7 @@ export default function DocumentBuilder({
         if (w) w.close();
         return;
       }
-      const url = `/${locale}/documents/${effectiveId}/print`;
+      const url = routes.documentPrint(locale, effectiveId);
       if (w) w.location.href = url;
       else window.open(url, '_blank');
     })();
@@ -146,7 +147,7 @@ export default function DocumentBuilder({
 
   function quickPrint() {
     if (!effectiveId) return;
-    window.open(`/${locale}/documents/${effectiveId}/print`, '_blank');
+    window.open(routes.documentPrint(locale, effectiveId), '_blank');
   }
 
   const statusLabel =

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import {redirect} from 'next/navigation';
 import {createClient} from '@/lib/supabase/server';
+import {routes} from '@/lib/routes';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,7 +18,7 @@ export default async function DocumentsPage({
 
   const supabase = await createClient();
   const {data: {user}} = await supabase.auth.getUser();
-  if (!user) redirect(`/${locale}/login`);
+  if (!user) redirect(routes.login(locale));
 
   let query = supabase
     .from('documents')
@@ -42,7 +43,7 @@ export default async function DocumentsPage({
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2">
-        <form className="flex-1" action={`/${locale}/documents`} method="get">
+        <form className="flex-1" action={routes.documents(locale)} method="get">
           <input
             name="q"
             defaultValue={q}
@@ -52,7 +53,7 @@ export default async function DocumentsPage({
         </form>
 
         <Link
-          href={`/${locale}/documents/new`}
+          href={routes.documentNew(locale)}
           className="rounded-xl bg-black px-3 py-2 text-sm text-white"
         >
           New
@@ -68,7 +69,7 @@ export default async function DocumentsPage({
           {docs.map((d) => (
             <Link
               key={d.id}
-              href={`/${locale}/documents/${d.id}`}
+              href={routes.document(locale, d.id)}
               className="block rounded-xl border bg-white p-4 hover:bg-gray-50"
             >
               <div className="text-sm font-semibold">{d.title ?? 'Untitled'}</div>

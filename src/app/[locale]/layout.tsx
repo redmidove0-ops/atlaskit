@@ -6,6 +6,7 @@ import {notFound} from 'next/navigation';
 import {getDir, routing} from '@/i18n/routing';
 import HtmlLangDir from '@/components/HtmlLangDir';
 import LocaleSwitcher from '@/components/LocaleSwitcher';
+import {routes} from '@/lib/routes';
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({locale}));
@@ -34,11 +35,11 @@ export default async function LocaleLayout({
         <header className="locale-header no-print border-b bg-white">
           <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
             <div className="flex items-center gap-4">
-              <Link href={`/${locale}`} className="text-lg font-semibold">
+              <Link href={routes.home(locale)} className="text-lg font-semibold">
                 {tCommon('appName')}
               </Link>
               <Link
-                href={`/${locale}/dashboard`}
+                href={routes.dashboard(locale)}
                 className="text-sm opacity-80 hover:opacity-100"
               >
                 {tNav('dashboard')}

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import {useParams} from 'next/navigation';
 import InvoicePreview from '@/components/InvoicePreview';
+import {routes} from '@/lib/routes';
 import type {DocDraft} from '@/lib/docDraft';
 
 type Template = 'classic' | 'modern';
@@ -23,8 +24,8 @@ export default function PrintDocClient({locale, docId, draft, template}: Props) 
   const effectiveId = docId ?? params?.id;
 
   const backHref = effectiveId
-    ? `/${effectiveLocale}/documents/${effectiveId}`
-    : `/${effectiveLocale}/documents`;
+    ? routes.document(effectiveLocale, effectiveId)
+    : routes.documents(effectiveLocale);
 
   return (
     <div className="min-h-screen bg-white text-black">

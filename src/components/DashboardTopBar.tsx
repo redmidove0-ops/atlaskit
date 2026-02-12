@@ -6,6 +6,7 @@ import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 import {useEffect, useMemo, useState} from 'react';
 
 import LocaleSwitcher from '@/components/LocaleSwitcher';
+import {routes} from '@/lib/routes';
 
 type Props = {
   /** اختياري: لو عندك صفحة فيها بحث */
@@ -47,11 +48,11 @@ export default function DashboardTopBar({
 
   const links = useMemo(
     () => [
-      {href: `/${locale}/documents`, label: t('new')}, // زر New يروح للـ documents (ومنها new)
-      {href: `/${locale}/templates`, label: t('templates')},
-      {href: `/${locale}/clients`, label: t('clients')},
-      {href: `/${locale}/products`, label: t('products')},
-      {href: `/${locale}/settings/company`, label: t('company')}
+      {href: routes.documents(locale), label: t('new')},
+      {href: routes.templates(locale), label: t('templates')},
+      {href: routes.clients(locale), label: t('clients')},
+      {href: routes.products(locale), label: t('products')},
+      {href: routes.settingsCompany(locale), label: t('company')}
     ],
     [locale, t]
   );
@@ -60,7 +61,7 @@ export default function DashboardTopBar({
     <header className="no-print sticky top-0 z-40 border-b bg-white">
       <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
         {/* Brand */}
-        <Link href={`/${locale}/documents`} className="flex items-center gap-2">
+        <Link href={routes.documents(locale)} className="flex items-center gap-2">
           <div className="rounded-xl bg-black px-3 py-1.5 text-sm font-semibold text-white">
             {t('appName')}
           </div>
