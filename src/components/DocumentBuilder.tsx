@@ -9,6 +9,7 @@ import ClientPicker from '@/components/ClientPicker';
 import LineItemsEditor from '@/components/LineItemsEditor';
 import ProductPickerModal, {type CatalogProduct} from '@/components/ProductPickerModal';
 import {routes} from '@/lib/routes';
+import {isValidUuid} from '@/lib/uuid';
 
 import {
   type DocDraft,
@@ -16,13 +17,6 @@ import {
   genLineId,
   normalizeDevisDraft
 } from '@/lib/docDraft';
-
-const UUID_RE =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
-function isUuid(v?: string | null): v is string {
-  return !!v && UUID_RE.test(v);
-}
 
 type SaveState = 'idle' | 'saving' | 'saved' | 'error';
 
@@ -41,8 +35,8 @@ export default function DocumentBuilder({
 
   // ✅ خذ الـid إمّا من props أو من URL
   const effectiveId = useMemo(() => {
-    const fromProp = isUuid(docId) ? docId : null;
-    const fromUrl = isUuid(params?.id) ? (params.id as string) : null;
+    const fromProp = isValidUuid(docId) ? docId : null;
+    const fromUrl = isValidUuid(params?.id) ? (params.id as string) : null;
     return fromProp ?? fromUrl;
   }, [docId, params]);
 

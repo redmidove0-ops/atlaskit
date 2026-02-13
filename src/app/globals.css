@@ -98,6 +98,50 @@ body:has([data-print-layout]) {
   --sidebar-ring: oklch(0.55 0.2 260);
   /* AtlasKit brand tokens */
   --success: oklch(0.65 0.2 150);
+
+  /* ── Font Families ── */
+  --font-arabic: "Cairo", "Segoe UI", Tahoma, sans-serif;
+  --font-arabic-serif: "Amiri", "Times New Roman", serif;
+  --font-latin: "Roboto", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", Consolas, monospace;
+  
+  /* ── Typography Scale ── */
+  --font-size-xs: 0.625rem;
+  --font-size-sm: 0.75rem;
+  --font-size-base: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-5xl: 3rem;
+  
+  /* ── Line Heights ── */
+  --line-height-none: 1;
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 2;
+  
+  /* ── Algerian Government Colors ── */
+  --color-gov-green: #006233;
+  --color-gov-green-dark: #004d27;
+  --color-gov-green-light: #c8e6c9;
+  --color-gov-red: #d21034;
+  --color-gov-red-dark: #b71c1c;
+  --color-gov-red-light: #ffcdd2;
+  
+  /* ── Document Colors ── */
+  --color-doc-paper: #ffffff;
+  --color-doc-header: #1a1a2e;
+  --color-doc-text: #212529;
+  --color-doc-text-secondary: #6c757d;
+  --color-doc-text-muted: #adb5bd;
+  --color-doc-border: #dee2e6;
+  --color-doc-table-header: #f8f9fa;
+  --color-doc-table-stripe: #f8f9fa;
   --success-foreground: oklch(0.985 0 0);
   --warning: oklch(0.75 0.15 70);
   --warning-foreground: oklch(0.2 0.03 70);
@@ -147,4 +191,213 @@ body:has([data-print-layout]) {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+}
+
+/* ══════════════════════════════════════════════════════════════ */
+/* AtlasKit Design System - RTL/LTR & Typography                   */
+/* ══════════════════════════════════════════════════════════════ */
+
+/* ── Font Family Utilities ── */
+.font-arabic {
+  font-family: var(--font-arabic);
+}
+
+.font-arabic-serif {
+  font-family: var(--font-arabic-serif);
+}
+
+.font-latin {
+  font-family: var(--font-latin);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* ── RTL/LTR Containers ── */
+.rtl-container,
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+.ltr-container,
+[dir="ltr"] {
+  direction: ltr;
+  text-align: left;
+}
+
+/* ── RTL Text Alignment ── */
+.rtl-text {
+  text-align: right;
+}
+
+.ltr-text {
+  text-align: left;
+}
+
+/* ── RTL Tables ── */
+.rtl-table {
+  direction: rtl;
+}
+
+.rtl-table th,
+.rtl-table td {
+  text-align: right;
+}
+
+.ltr-table {
+  direction: ltr;
+}
+
+.ltr-table th,
+.ltr-table td {
+  text-align: left;
+}
+
+/* ── Number cells always LTR (for proper digit ordering) ── */
+.num-cell {
+  direction: ltr;
+  text-align: right;
+  unicode-bidi: isolate;
+  font-family: var(--font-latin);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Bidirectional isolation ── */
+.bidi-isolate {
+  unicode-bidi: isolate;
+}
+
+.bidi-embed {
+  unicode-bidi: embed;
+}
+
+/* ── Flex utilities for RTL ── */
+[dir="rtl"] .flex-row-logical {
+  flex-direction: row-reverse;
+}
+
+[dir="ltr"] .flex-row-logical {
+  flex-direction: row;
+}
+
+/* ── Document Typography ── */
+.doc-title {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.025em;
+}
+
+.doc-subtitle {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  line-height: var(--line-height-snug);
+}
+
+.doc-section-header {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  line-height: var(--line-height-snug);
+}
+
+.doc-body {
+  font-size: var(--font-size-base);
+  font-weight: 400;
+  line-height: var(--line-height-normal);
+}
+
+.doc-small {
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  line-height: var(--line-height-normal);
+}
+
+.doc-label {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  line-height: var(--line-height-tight);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ── Document Colors ── */
+.doc-paper {
+  background-color: var(--color-doc-paper);
+}
+
+.doc-header {
+  background-color: var(--color-doc-header);
+  color: white;
+}
+
+.doc-header-green {
+  background-color: var(--color-gov-green);
+  color: white;
+}
+
+.doc-header-red {
+  background-color: var(--color-gov-red);
+  color: white;
+}
+
+/* ── Document Table Styles ── */
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.doc-table th {
+  background-color: var(--color-doc-table-header);
+  border: 1px solid var(--color-doc-border);
+  padding: 8px 12px;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+}
+
+.doc-table td {
+  border: 1px solid var(--color-doc-border);
+  padding: 8px 12px;
+  font-size: var(--font-size-sm);
+}
+
+.doc-table tr:nth-child(even) td {
+  background-color: var(--color-doc-table-stripe);
+}
+
+/* ── Status Badge Colors ── */
+.status-draft {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.status-sent {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status-paid {
+  background-color: #d1fae5;
+  color: #047857;
+}
+
+.status-partial {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.status-overdue {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.status-cancelled {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+}
+
+.status-delivered {
+  background-color: #d1fae5;
+  color: #047857;
 }

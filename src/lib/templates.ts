@@ -1,10 +1,24 @@
-export type TemplateId = 'classic' | 'modern';
+// src/lib/templates.ts
+// ────────────────────────────────────────────────────────────────
+// AtlasKit — Template Configuration (Legacy)
+// Re-exports from design system for backward compatibility
+// ────────────────────────────────────────────────────────────────
+
+// Re-export from design system
+export { 
+  type TemplateId,
+  TEMPLATE_LIST,
+  normalizeTemplateId as normalizeTemplate,
+  CLASSIC_TEMPLATE,
+  MODERN_TEMPLATE,
+} from '@/lib/design';
 
 export const TEMPLATE_COOKIE = 'atlaskit_template';
-export const DEFAULT_TEMPLATE: TemplateId = 'classic';
+export const DEFAULT_TEMPLATE = 'classic' as const;
 
+// Legacy templates array format for backward compatibility
 export const templates: Array<{
-  id: TemplateId;
+  id: 'classic' | 'modern';
   title: string;
   description: string;
 }> = [
@@ -20,6 +34,3 @@ export const templates: Array<{
   }
 ];
 
-export function normalizeTemplate(value: unknown): TemplateId {
-  return value === 'modern' ? 'modern' : 'classic';
-}

@@ -3,9 +3,7 @@ import {createClient} from '@/lib/supabase/server';
 import {createDefaultDraft, type DocDraft} from '@/lib/docDraft';
 import PrintDocClient from '@/components/PrintDocClient';
 import {routes} from '@/lib/routes';
-
-const UUID_RE =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+import {isValidUuid} from '@/lib/uuid';
 
 export default async function PrintDocumentPage({
   params
@@ -15,7 +13,7 @@ export default async function PrintDocumentPage({
   const {locale, id} = await params;
 
   // Validate UUID format before querying to avoid PostgreSQL type errors
-  if (!UUID_RE.test(id)) return notFound();
+  if (!isValidUuid(id)) return notFound();
 
   const supabase = await createClient();
   const {data: {user}} = await supabase.auth.getUser();

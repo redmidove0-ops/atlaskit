@@ -1,8 +1,6 @@
 import {NextResponse} from 'next/server';
 import {createClient} from '@/lib/supabase/server';
-
-const UUID_RE =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+import {isValidUuid} from '@/lib/uuid';
 
 export async function PUT(req: Request, ctx: any) {
   // ✅ Next.js 16: params قد تكون Promise
@@ -11,7 +9,7 @@ export async function PUT(req: Request, ctx: any) {
 
   const id = params?.id as string | undefined;
 
-  if (!id || id === 'undefined' || !UUID_RE.test(id)) {
+  if (!id || id === 'undefined' || !isValidUuid(id)) {
     return NextResponse.json(
       {ok: false, error: 'Invalid document id', received: id ?? null},
       {status: 400}

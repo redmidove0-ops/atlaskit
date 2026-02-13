@@ -30,6 +30,30 @@
   th {
     break-inside: avoid;
   }
+  
+  /* RTL print support */
+  [dir="rtl"] {
+    direction: rtl;
+    text-align: right;
+  }
+  
+  [dir="ltr"] {
+    direction: ltr;
+    text-align: left;
+  }
+  
+  /* Ensure Arabic fonts load for print */
+  .font-arabic {
+    font-family: "Cairo", "Segoe UI", Tahoma, sans-serif;
+  }
+  
+  .font-arabic-serif {
+    font-family: "Amiri", "Times New Roman", serif;
+  }
+  
+  .font-latin {
+    font-family: "Roboto", "Helvetica Neue", Arial, sans-serif;
+  }
 }
 
 @media screen {
@@ -43,5 +67,14 @@
   .print-sheet {
     word-break: break-word;
     overflow-wrap: anywhere;
+  }
+  
+  /* Number cells */
+  .num-cell {
+    direction: ltr;
+    text-align: right;
+    unicode-bidi: isolate;
+    font-family: "Roboto", "Helvetica Neue", Arial, sans-serif;
+    font-variant-numeric: tabular-nums;
   }
 }
